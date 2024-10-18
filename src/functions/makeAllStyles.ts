@@ -14,19 +14,27 @@ Most of the properties in each of the interfaces are optionals, as users may not
 This function therefore instantiates defaults where user values have not been provided.
 This creates a styles object that is passed to the chart.
 */
-import { AxisStyle, CentileStyle, SDSStyle, ChartStyle, GridlineStyle, MeasurementStyle } from '../interfaces/StyleObjects';
+import {
+    AxisStyle,
+    CentileStyle,
+    SDSStyle,
+    ChartStyle,
+    GridlineStyle,
+    MeasurementStyle,
+    ReferenceStyle,
+} from '../interfaces/StyleObjects';
 
 const black = '#000000';
 const white = '#FFFFFF';
 const darkGrey = '#808080';
 const midGrey = '#b3b3b3';
 const lightGrey = '#d9d9d9';
-const lightLightGrey = "#f3f3f3";
-const charcoal = "#4d4d4d";
-const aquaGreen ='#00BDAA'
-const orange = '#FF8000'
-const purple = '#7159AA'
-const strongGreen = '#66CC33'
+const lightLightGrey = '#f3f3f3';
+const charcoal = '#4d4d4d';
+const aquaGreen = '#00BDAA';
+const orange = '#FF8000';
+const purple = '#7159AA';
+const strongGreen = '#66CC33';
 
 function makeAllStyles(
     chartStyle?: ChartStyle,
@@ -35,9 +43,9 @@ function makeAllStyles(
     centileStyle?: CentileStyle,
     sdsStyle?: SDSStyle,
     measurementStyle?: MeasurementStyle,
-    textMultiplier?: number // this is used to scale text size based on the aspect ratio of the chart using the height and width. Default is 1
+    textMultiplier?: number, // this is used to scale text size based on the aspect ratio of the chart using the height and width. Default is 1
+    referenceStyle?: ReferenceStyle,
 ) {
-
     let newGridlineStyle = {
         stroke: lightGrey,
         strokeWidth: 0.25,
@@ -56,11 +64,11 @@ function makeAllStyles(
             strokeDasharray: '',
         };
     }
-    return { 
+    return {
         chartMisc: {
             background: {
                 fill: chartStyle?.backgroundColour ?? white,
-            }
+            },
         },
         toolTipFlyout: {
             stroke: chartStyle?.tooltipStroke ?? midGrey, // tooltip border colour
@@ -70,17 +78,20 @@ function makeAllStyles(
             fontSize: (chartStyle?.tooltipTextStyle?.size ?? 14) * (textMultiplier ?? 1),
             fill: chartStyle?.tooltipTextStyle?.colour ?? black,
             fontFamily: chartStyle?.tooltipTextStyle?.name ?? 'Montserrat',
+            fontWeight: chartStyle?.tooltipTextStyle?.weight ?? 400,
             fontStyle: chartStyle?.tooltipTextStyle?.style ?? 'normal',
-            textAnchor: "start"
+            textAnchor: 'start',
         },
         chartTitle: {
-            fontFamily:  chartStyle?.titleStyle?.name ?? 'Arial',
+            fontFamily: chartStyle?.titleStyle?.name ?? 'Arial',
+            fontWeight: chartStyle?.subTitleStyle?.weight ?? 700,
             color: chartStyle?.titleStyle?.colour ?? black,
             fontSize: chartStyle?.titleStyle?.size ?? 14,
             fontStyle: chartStyle?.titleStyle?.style === 'italic' ? 'italic' : 'normal',
         },
         chartSubTitle: {
-            fontFamily: chartStyle?.subTitleStyle?.name ?? 'Arial', 
+            fontFamily: chartStyle?.subTitleStyle?.name ?? 'Arial',
+            fontWeight: chartStyle?.subTitleStyle?.weight ?? 700,
             color: chartStyle?.subTitleStyle?.colour ?? black,
             fontSize: chartStyle?.subTitleStyle?.size ?? 14,
             fontStyle: chartStyle?.subTitleStyle?.style === 'italic' ? 'italic' : 'normal',
@@ -96,6 +107,7 @@ function makeAllStyles(
                 padding: 20,
                 fill: axisStyle?.axisLabelTextStyle?.colour ?? black,
                 fontFamily: axisStyle?.axisLabelTextStyle?.name ?? 'Arial',
+                fontWeight: axisStyle?.axisLabelTextStyle?.weight ?? 400,
                 fontStyle: axisStyle?.axisLabelTextStyle?.style ?? 'normal',
             },
             ticks: {
@@ -103,10 +115,11 @@ function makeAllStyles(
             },
             tickLabels: {
                 fontSize: (axisStyle?.tickLabelTextStyle?.size ?? 8) * (textMultiplier ?? 1),
-                padding: 5,
+                padding: axisStyle?.tickLabelTextStyle?.padding ?? 5,
                 fill: axisStyle?.tickLabelTextStyle?.colour ?? black,
                 color: axisStyle?.tickLabelTextStyle?.colour ?? black,
                 fontFamily: axisStyle?.axisLabelTextStyle?.name ?? 'Arial',
+                fontWeight: axisStyle?.axisLabelTextStyle?.weight ?? 400,
                 fontStyle: axisStyle?.axisLabelTextStyle?.style ?? 'normal',
             },
             grid: {
@@ -117,6 +130,7 @@ function makeAllStyles(
             fill: axisStyle?.tickLabelTextStyle?.colour ?? black,
             fontSize: (axisStyle?.tickLabelTextStyle?.size ?? 8) * (textMultiplier ?? 1),
             fontFamily: axisStyle?.tickLabelTextStyle?.name ?? 'Arial',
+            fontWeight: axisStyle?.tickLabelTextStyle?.weight ?? 400,
             fontStyle: axisStyle?.axisLabelTextStyle?.style ?? 'normal',
         },
         yAxis: {
@@ -129,6 +143,7 @@ function makeAllStyles(
                 padding: 25,
                 fill: axisStyle?.axisLabelTextStyle?.colour ?? black,
                 fontFamily: axisStyle?.axisLabelTextStyle?.name ?? 'Arial',
+                fontWeight: axisStyle?.axisLabelTextStyle?.weight ?? 400,
                 fontStyle: axisStyle?.axisLabelTextStyle?.style ?? 'normal',
             },
             ticks: {
@@ -139,6 +154,7 @@ function makeAllStyles(
                 padding: 5,
                 fill: axisStyle?.tickLabelTextStyle?.colour ?? black,
                 fontFamily: axisStyle?.axisLabelTextStyle?.name ?? 'Arial',
+                fontWeight: axisStyle?.axisLabelTextStyle?.weight ?? 400,
                 fontStyle: axisStyle?.axisLabelTextStyle?.style ?? 'normal',
             },
             grid: {
@@ -154,29 +170,31 @@ function makeAllStyles(
         },
         delayedPubertyThresholdLine: {
             data: {
-                stroke: charcoal,
+                stroke: axisStyle.axisThresholdLineStyle?.colour ?? charcoal,
                 strokeWidth: 1,
             },
         },
         delayedPubertyThresholdLabel: {
-            fontSize: (9) * (textMultiplier ?? 1),
-            fill: axisStyle?.axisLabelTextStyle?.colour ?? black,
-            fontFamily: axisStyle?.axisLabelTextStyle?.name ?? 'Arial',
+            fontSize: (axisStyle?.axisThresholdLabelTextStyle?.size ?? 9) * (textMultiplier ?? 1),
+            fill: axisStyle?.axisThresholdLabelTextStyle?.colour ?? black,
+            fontFamily: axisStyle?.axisThresholdLabelTextStyle?.name ?? 'Arial',
+            fontWeight: axisStyle?.axisThresholdLabelTextStyle?.weight ?? 400,
             textAlign: 'start',
         },
         nondisjunctionThresholdLine: {
             data: {
-                stroke: charcoal,
+                stroke: axisStyle.axisThresholdLineStyle?.colour ?? charcoal,
                 strokeWidth: 1,
             },
         },
-        sdsLine: {  // these are the sds lines on the BMI chart
+        sdsLine: {
+            // these are the sds lines on the BMI chart
             data: {
                 stroke: centileStyle?.sdsStroke ?? '#A9A9A9',
                 strokeWidth: 1.0,
                 strokeLinecap: 'round',
                 strokeDasharray: '5 5',
-            }
+            },
         },
         dashedCentile: {
             data: {
@@ -194,37 +212,38 @@ function makeAllStyles(
             },
         },
         centileLabel: {
-            fontSize: (6) * (textMultiplier ?? 1),
-            fontFamily: 'Montserrat',
-            fill: centileStyle?.centileStroke ?? black
+            fontSize: (centileStyle.centileTextStyle?.size ?? 6) * (textMultiplier ?? 1),
+            fontFamily: centileStyle.centileTextStyle?.name ?? 'Montserrat',
+            fontWeight: centileStyle.centileTextStyle?.weight ?? 400,
+            fill: centileStyle?.centileStroke ?? black,
         },
         heightSDS: {
             data: {
                 stroke: aquaGreen,
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
-            }
+            },
         },
         weightSDS: {
             data: {
                 stroke: orange,
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
-            }
+            },
         },
         ofcSDS: {
             data: {
                 stroke: purple,
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
-            }
+            },
         },
         bmiSDS: {
             data: {
                 stroke: strongGreen,
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
-            }
+            },
         },
         midParentalCentile: {
             data: {
@@ -232,7 +251,7 @@ function makeAllStyles(
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
                 strokeOpacity: 1.0,
-            }
+            },
         },
         midParentalSDS: {
             data: {
@@ -240,16 +259,17 @@ function makeAllStyles(
                 strokeWidth: 1.5,
                 strokeLinecap: 'round',
                 strokeOpacity: 1.0,
-                strokeDasharray: '2 5'
-            }
+                strokeDasharray: '2 5',
+            },
         },
         midParentalArea: {
             data: {
                 fill: centileStyle?.midParentalAreaFill ?? lightLightGrey,
-                opacity: 0.5
-            }
+                opacity: 0.5,
+            },
         },
-        measurementPoint: { // these are the points on the chart where measurements are plotted: note that the size is dynamically set based on the isCrowded function
+        measurementPoint: {
+            // these are the points on the chart where measurements are plotted: note that the size is dynamically set based on the isCrowded function
             data: {
                 fill: measurementStyle?.measurementFill ?? black,
             },
@@ -260,16 +280,17 @@ function makeAllStyles(
                 strokeWidth: 1.25,
             },
         },
-        highlightedMeasurementFill: { // these are the points on the chart where measurements are plotted: note that the size is dynamically set based on the isCrowded function
+        highlightedMeasurementFill: {
+            // these are the points on the chart where measurements are plotted: note that the size is dynamically set based on the isCrowded function
             data: {
                 fill: measurementStyle?.highlightedMeasurementFill ?? black,
-            }
+            },
         },
         eventTextStyle: {
             size: (measurementStyle?.eventTextStyle?.size ?? 14) * (textMultiplier ?? 1),
             name: measurementStyle?.eventTextStyle?.name ?? 'Montserrat',
             colour: measurementStyle?.eventTextStyle?.colour ?? black,
-            style: measurementStyle?.eventTextStyle?.style ?? 'normal'
+            style: measurementStyle?.eventTextStyle?.style ?? 'normal',
         },
         toggleStyle: {
             activeColour: chartStyle?.toggleButtonActiveColour ?? black,
@@ -278,7 +299,15 @@ function makeAllStyles(
             color: chartStyle?.toggleButtonTextStyle?.colour ?? white,
             fontSize: chartStyle?.toggleButtonTextStyle?.size ?? 14,
             fontStyle: chartStyle?.toggleButtonTextStyle?.style === 'italic' ? 'italic' : 'normal',
-            margin: 0
+            fontWeight: chartStyle?.toggleButtonTextStyle?.weight ?? 400,
+            margin: 0,
+        },
+        referenceTextStyle: {
+            fontSize: referenceStyle?.size ?? 8,
+            fontFamily: referenceStyle?.name ?? 'Arial',
+            color: referenceStyle?.colour ?? black,
+            fontWeight: referenceStyle?.weight ?? 200,
+            fontStyle: referenceStyle?.style ?? 'normal',
         },
     };
 }
